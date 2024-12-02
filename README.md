@@ -48,4 +48,4 @@ API keys: f02a383a62d8a84368b496f0af2d5e84
 API key:ec24bd599c28e54f30b29bc4
 ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️
 7. Slum ny background(finns api key in line 358 in main.js)
-API key:8RcHvVomaFB6gi9ldkMOjaLui6isGkWpV8GI9pNvILU
+API key:8RcHvVomaFB6gi9ldkMOjaLui6isGkWpV8GI9pNvIL

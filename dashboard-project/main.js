@@ -1,4 +1,6 @@
-//1.Add date and time 
+import CONFIG from "./config";
+
+// 1. Add date and time 
 //************************** 
 function updateDateTime() {
   // Get the current date and time
@@ -108,7 +110,6 @@ function addLink() {
       linkElement.style.display = "flex";
       linkElement.style.alignItems = "center";
       linkElement.style.marginBottom = "10px";
-
       // Create icon element
       const iconElement = document.createElement("img");
       const faviconUrl = `https://www.google.com/s2/favicons?domain=${url}`;
@@ -169,7 +170,6 @@ function initializeLinks() {
       linkElement.style.display = "flex";
       linkElement.style.alignItems = "center";
       linkElement.style.marginBottom = "10px";
-
       // Create icon element
       const iconElement = document.createElement("img");
       const faviconUrl = `https://www.google.com/s2/favicons?domain=${link.url}`;
@@ -220,7 +220,9 @@ initializeLinks();
 // *************************************
 
 
-const apiKey = "xxxxxxxxxxxxx";
+const apiKey = CONFIG.OPENWEATHER_API_KEY;
+console.log(apiKey);
+
 const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
 
 const searchBox = document.querySelector(".search input");
@@ -233,9 +235,8 @@ if (lastSearchedCity) {
   searchBox.value = lastSearchedCity;
   checkWeather(lastSearchedCity);
 }
-
 async function checkWeather(city) {
-  const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+  const response = await fetch(`${apiUrl}${city}&appid=${apiKey}`);
   if (response.status == 404) {
       document.querySelector(".error").style.display = "block";
       document.querySelector(".weather").style.display = "none";
@@ -278,57 +279,67 @@ searchBtn.addEventListener("click", () => {
 //  5- Currency Converter
 // *************************************
    
+let apikey = CONFIG.EXCHANGERATE_API_KEY;
+console.log(apikey);
 
+let api = `https://v6.exchangerate-api.com/v6/${apikey}/latest/USD`;
+const fromDropDown = document.getElementById("form-currency-select");
+const toDropDown = document.getElementById("to-currency-select");
 
-let apikey="xxxxxxxxxxxxxx";
-let api= `https://v6.exchangerate-api.com/v6/${apikey}/latest/USD`
-const fromDropDown=document.getElementById("form-currency-select");
-const toDropDown =document.getElementById("to-currency-select");
-//Create dropdown from the currencies array
+// Fetch currency data from the API
+fetch(api)
+  .then((response) => response.json())
+  .then((data) => {
+    // Get the list of currencies from the API response
+    const currencies = Object.keys(data.conversion_rates);
 
+    // Create dropdown options for currencies
+    currencies.forEach((currency) => {
+      const option = document.createElement("option");
+      option.value = currency;
+      option.text = currency;
+      fromDropDown.add(option);
+    });
 
+    currencies.forEach((currency) => {
+      const option = document.createElement("option");
+      option.value = currency;
+      option.text = currency;
+      toDropDown.add(option);
+    });
 
-currencies.forEach((currency)=>{
-  const option =document.createElement("option");
-  option.value=currency;
-  option.text=currency;
-  fromDropDown.add(option);
-  
-});
-currencies.forEach((currency)=>{
-  const option =document.createElement("option");
-  option.value=currency;
-  option.text=currency;
-  toDropDown.add(option);
-  
-});
-//setting default values
-fromDropDown.value ="USD";
-toDropDown.value="SEK"
+    // Set default values for dropdowns
+    fromDropDown.value = "USD";
+    toDropDown.value = "SEK";
+  })
+  .catch((error) => {
+    console.error("Error fetching currency data:", error);
+  });
 
-let convertCurrency=()=>{
-  //create Refrence
-  const amount =document.querySelector("#amount").value;
-  const fromCurrency= fromDropDown.value;
-  const toCurrency=toDropDown.value;
+let convertCurrency = () => {
+  // Create Reference
+  const amount = document.querySelector("#amount").value;
+  const fromCurrency = fromDropDown.value;
+  const toCurrency = toDropDown.value;
 
-  //if  amount input field is not empty
-  if(amount.length !=0){
-      fetch(api)
-      .then((resp)=>resp.json())
-      .then((data)=>{
-          let fromExchangeRate= data.conversion_rates[fromCurrency];
-          let toExchangeRate=data.conversion_rates[toCurrency];
-          const convertedAmount= (amount/fromExchangeRate)*toExchangeRate;
-          result.innerHTML=`${amount} ${fromCurrency} = ${convertedAmount.toFixed(2)}${toCurrency}`
-
+  // If amount input field is not empty
+  if (amount.length !== 0) {
+    fetch(api)
+      .then((resp) => resp.json())
+      .then((data) => {
+        let fromExchangeRate = data.conversion_rates[fromCurrency];
+        let toExchangeRate = data.conversion_rates[toCurrency];
+        const convertedAmount = (amount / fromExchangeRate) * toExchangeRate;
+        result.innerHTML = `${amount} ${fromCurrency} = ${convertedAmount.toFixed(2)} ${toCurrency}`;
       });
-  }else{
-      alert("Please fill in the amount");
+  } else {
+    alert("Please fill in the amount");
   }
 };
-document.querySelector("#conver-button").addEventListener("click",convertCurrency);
-window.addEventListener("load",convertCurrency);
+
+document.querySelector("#conver-button").addEventListener("click", convertCurrency);
+window.addEventListener("load", convertCurrency);
+
 
 
 
@@ -355,23 +366,23 @@ window.addEventListener("load",convertCurrency);
 // *************************************
 
 // Replace 'YOUR_UNSPLASH_ACCESS_KEY' with your actual Unsplash access key
-const unsplashAccessKey = 'xxxxxxxxxxxxxxxx';
+const unsplashAccessKey = CONFIG.UNSPLASH_ACCESS_KEY;
+console.log(unsplashAccessKey);
+
 
 function changeBackground() {
   const searchTerm = document.getElementById('searchTerm').value;
-
   // Fetch a random image from Unsplash based on the user's search term
   fetch(`https://api.unsplash.com/photos/random?query=${searchTerm}&client_id=${unsplashAccessKey}`)
       .then(response => response.json())
       .then(data => {
           if (data.urls && data.urls.full) {
               // Set the background image of the body
-              document.body.style.backgroundImage = `url('${data.urls.full}')`;
+              document.body.style.backgroundImage = url('${data.urls.full}');
           } else {
               console.error('Invalid response from Unsplash API');
           }
       })
-      .catch(error => {
-          console.error('Error fetching data from Unsplash API:', error);
-      });
-}
+      .catch((error) => {
+          console.error('Error fetching data from Unsplash API:', error.message);
+      })};
